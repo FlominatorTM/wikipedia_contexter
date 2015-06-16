@@ -137,3 +137,5 @@ function find_sentence_with($sentences, $needle)
 	return $hits;
 }
 ?>
+<hr>
+<a href="Benutzer:Flominator/Contexter">Anleitung</a> - <a href="https://github.com/FlominatorTM/wikipedia_contexter/issues">Anregungen und Probleme</a> - by <a href="https://de.wikipedia.org/wiki/Benutzer:Flominator">Flominator</a>
