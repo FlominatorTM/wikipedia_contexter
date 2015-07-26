@@ -4,8 +4,8 @@ include("shared_inc/wiki_functions.inc.php");
 
 $article = $_REQUEST['article'];
 $articleenc = name_in_url($article);
-$lang = "de";
-$project = "wikipedia";
+//$lang = "de";
+//$project = "wikipedia";
 
 $needle = $_REQUEST['needle'];
 $listonly = $_REQUEST['listonly'];
@@ -28,39 +28,40 @@ echo "<h1>Contexts for <a href=\"https://$server/wiki/$article\">$article</a></h
 echo "[<a href=\"contexter.php?article=$article&language=$lang&listonly=true&all=$allNamespaces\">list these as javascript array</a>]<br />";
 $pages = get_linked_pages($articleenc);
 
-
-if($listonly!="true")
+if(isset($article))
 {
-	foreach ($pages AS $linking_article)
+	if($listonly!="true")
 	{
-		// echo "<hr>$linking_artile<hr>";
-		$ex_sentences = extract_sentences(name_in_url($linking_article));
-		
-		$sentences_cont = find_sentence_with($ex_sentences, $needle);
-		
-		if(count($sentences_cont)>0)
+		foreach ($pages AS $linking_article)
 		{
-			echo "<h2><a href=\"http://$server/wiki/$linking_article\">$linking_article</a></h2>";
-			echo "<small><a href=\"http://$server/w/index.php?title=$linking_article&action=edit&summary=Link%20auf%20BKL%20%5B%5B".$needle."%5D%5D%20pr%C3%A4zisiert\" target=\"_blank\">[edit]</a></small>\n";
-			//echo "<small><a href=\"javascript:window.open('http://$server/w/index.php?title=$linking_article&action=edit').find()\">[edit-JS]</a></small>\n";
+			// echo "<hr>$linking_artile<hr>";
+			$ex_sentences = extract_sentences(name_in_url($linking_article));
 			
-			foreach($sentences_cont as $s)
+			$sentences_cont = find_sentence_with($ex_sentences, $needle);
+			
+			if(count($sentences_cont)>0)
 			{
-				echo "$s.<br><br>";
+				echo "<h2><a href=\"http://$server/wiki/$linking_article\">$linking_article</a></h2>";
+				echo "<small><a href=\"http://$server/w/index.php?title=$linking_article&action=edit&summary=Link%20auf%20BKL%20%5B%5B".$needle."%5D%5D%20pr%C3%A4zisiert\" target=\"_blank\">[edit]</a></small>\n";
+				//echo "<small><a href=\"javascript:window.open('http://$server/w/index.php?title=$linking_article&action=edit').find()\">[edit-JS]</a></small>\n";
+				
+				foreach($sentences_cont as $s)
+				{
+					echo "$s.<br><br>";
+				}
 			}
 		}
 	}
-}
-else
-{
-	echo "<textarea cols=\"150\" rows=\"80\">";
-	foreach ($pages AS $linking_article)
+	else
 	{
-		echo "\"".trim($linking_article)."\", ";;
+		echo "<textarea cols=\"150\" rows=\"80\">";
+		foreach ($pages AS $linking_article)
+		{
+			echo "\"".trim($linking_article)."\", ";;
+		}
+		echo "</textarea>";
 	}
-	echo "</textarea>";
 }
-
 
 function get_linked_pages($articleenc)
 {
@@ -68,7 +69,7 @@ function get_linked_pages($articleenc)
 	global $server, $limit, $allNamespaces;
 	//$page = "http://".$server."/wiki/Spezial:Verweisliste/".;
 	
-	$page = "https://de.wikipedia.org/w/index.php?title=Spezial:Linkliste/$articleenc&limit=$limit&from=0&hideredirs=1";
+	$page = "https://$server/w/index.php?title=Special:Whatlinkshere/$articleenc&limit=$limit&from=0&hideredirs=1&uselang=de";
 	if($allNamespaces=="")
 	{
 		$page.="&namespace=0";
@@ -88,7 +89,7 @@ function get_linked_pages($articleenc)
 	
 	$linked_list = substr($linked_list, 0, $list_ends);
 	$linked_list = strip_tags($linked_list);
-	$linked_list = str_replace("(← Links)", '', $linked_list); //Problemzeichen
+	$linked_list = str_replace("  ‎ (← Links | Seite bearbeiten)", '', $linked_list); //Problemzeichen
 	return explode("\n", str_replace("  ‎", "", trim($linked_list)));
 }
 
