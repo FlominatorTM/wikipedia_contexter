@@ -89,7 +89,7 @@ function get_linked_pages($articleenc)
 	
 	$linked_list = substr($linked_list, 0, $list_ends);
 	$linked_list = strip_tags($linked_list);
-	$linked_list = str_replace("  ‎ (← Links | Seite bearbeiten)", '', $linked_list); //Problemzeichen
+	$linked_list = str_replace("  ‎ (← Links | bearbeiten)", '', $linked_list); //Problemzeichen
 	return explode("\n", str_replace("  ‎", "", trim($linked_list)));
 }
 
