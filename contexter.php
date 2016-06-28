@@ -12,13 +12,18 @@ $needle = $_REQUEST['needle'];
 $listonly = $_REQUEST['listonly'];
 $allNamespaces = $_REQUEST['all'];
 
-
 if($needle=="")
 {
 	$needle=str_replace('_', ' ', $article);
 }
 
 $server = "$lang.$project.org";
+$summary =  $_REQUEST['summary'];
+
+if($summary == "")
+{
+	$summary = "Link%20auf%20BKL%20%5B%5B".$needle."%5D%5D%20pr%C3%A4zisiert";
+}
 
 $limit=$_REQUEST['limit'];
 if($limit=="")
@@ -31,38 +36,39 @@ echo "[<a href=\"contexter.php?article=$article&language=$lang&listonly=true&all
 $pages = get_linked_pages($articleenc);
 
 
-if($listonly!="true")
-{
-	if ($is_debug) var_dump($pages);
-	foreach ($pages AS $linking_article)
+	if($listonly!="true")
 	{
-		if($is_debug)  echo "<hr>$linking_article<hr>";
-		$ex_sentences = extract_sentences(name_in_url($linking_article));
-		
-		$sentences_cont = find_sentence_with($ex_sentences, $needle);
-		
-		if(count($sentences_cont)>0)
+		$summary = str_replace('_ARTICLE_', $needle, $summary);
+if ($is_debug) var_dump($pages);if ($is_debug) var_dump($pages);
+		foreach ($pages AS $linking_article)
 		{
-			echo "<h2><a href=\"http://$server/wiki/$linking_article\">$linking_article</a></h2>";
-			echo "<small><a href=\"http://$server/w/index.php?title=$linking_article&action=edit&summary=Link%20auf%20BKL%20%5B%5B".$needle."%5D%5D%20pr%C3%A4zisiert\" target=\"_blank\">[edit]</a></small>\n";
-			if($is_debug)  echo "<small><a href=\"javascript:window.open('http://$server/w/index.php?title=$linking_article&action=edit').find()\">[edit-JS]</a></small>\n";
+		if($is_debug)  echo "<hr>$linking_article<hr>";
+			$ex_sentences = extract_sentences(name_in_url($linking_article));
 			
-			foreach($sentences_cont as $s)
+			$sentences_cont = find_sentence_with($ex_sentences, $needle);
+			
+			if(count($sentences_cont)>0)
 			{
-				echo "$s.<br><br>";
+				echo "<h2><a href=\"http://$server/wiki/$linking_article\">$linking_article</a></h2>";
+			echo "<small><a href=\"http://$server/w/index.php?title=$linking_article&action=edit&summary=$summary\" target=\"_blank\">[edit]</a></small>\n";
+			if($is_debug)  echo "<small><a href=\"javascript:window.open('http://$server/w/index.php?title=$linking_article&action=edit').find()\">[edit-JS]</a></small>\n";
+				
+				foreach($sentences_cont as $s)
+				{
+					echo "$s.<br><br>";
+				}
 			}
 		}
 	}
-}
-else
-{
-	echo "<textarea cols=\"150\" rows=\"80\">";
-	foreach ($pages AS $linking_article)
+	else
 	{
-		echo "\"".trim($linking_article)."\", ";;
+		echo "<textarea cols=\"150\" rows=\"80\">";
+		foreach ($pages AS $linking_article)
+		{
+			echo "\"".trim($linking_article)."\", ";;
+		}
+		echo "</textarea>";
 	}
-	echo "</textarea>";
-}
 
 
 function get_linked_pages($articleenc)
