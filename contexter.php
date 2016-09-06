@@ -1,4 +1,37 @@
-<?php header('Content-Type: text/html; charset=utf-8'); 
+<?php header('Content-Type: text/html; charset=utf-8'); ?>
+<script>
+function checkBoxes(server, replace, replaceWith, user)
+{
+	allInputs = document.getElementsByTagName('input');
+	for(var i =0; i<allInputs.length; i++)
+	{
+		if(allInputs[i].type=="checkbox" && allInputs[i].checked)
+		{
+			var lemma = "";
+			try
+			{
+				lemma = allInputs[i].id;
+				
+				var url = 'https://'+server+'/w/index.php?title='+ lemma + '&action=edit&replace='+replace+'&replacewith='+ replaceWith+'&fixlinkstype=linklist&flauser='+user +'&flatime=' + generate_flatime_flo();
+				window.open(url);
+			}
+			catch (e)
+			{
+				alert(lemma + e);
+			}
+		}
+	}
+}
+
+/* copied from https://de.wikipedia.org/wiki/Benutzer:DerHexer/fixlinks.js */
+function generate_flatime_flo () {
+   var arbitrary_datestamp = Date.UTC(2008,10,1,0,0,0,0);
+   var current_date = new Date();
+   var current_timestamp = current_date.getTime();
+ 
+   return ( Math.floor((current_timestamp - arbitrary_datestamp) / 1000) );
+ }</script>
+<?
 //shows the context articles linked to one given article mention it by printing one sentence where it is used
 include("shared_inc/wiki_functions.inc.php");
 $is_debug = ($_REQUEST['debug']=="on" || $_REQUEST['debug']=="true" );
@@ -11,7 +44,7 @@ $project = "wikipedia";
 $needle = $_REQUEST['needle'];
 $listonly = $_REQUEST['listonly'];
 $allNamespaces = $_REQUEST['all'];
-
+$userName = $_REQUEST['username'];
 if($needle=="")
 {
 	$needle=str_replace('_', ' ', $article);
@@ -51,6 +84,9 @@ if ($is_debug) var_dump($pages);if ($is_debug) var_dump($pages);
 			{
 				echo "<h2><a href=\"http://$server/wiki/$linking_article\">$linking_article</a></h2>";
 			echo "<small><a href=\"http://$server/w/index.php?title=$linking_article&action=edit&summary=$summary\" target=\"_blank\">[edit]</a></small>\n";
+			echo "<input type=\"checkbox\" id=\"".htmlspecialchars($linking_article)."\">";
+			echo "<label for=\"$linking_article\">";
+			
 			if($is_debug)  echo "<small><a href=\"javascript:window.open('http://$server/w/index.php?title=$linking_article&action=edit').find()\">[edit-JS]</a></small>\n";
 				
 				foreach($sentences_cont as $s)
@@ -58,7 +94,10 @@ if ($is_debug) var_dump($pages);if ($is_debug) var_dump($pages);
 					echo "$s.<br><br>";
 				}
 			}
+			echo "</label>";
 		}
+	echo "<input id=\"target\" value=\"(Linkziel neu)\">\n";
+	echo "<input type=\"button\" onclick=\"javascript:checkBoxes('$server', '$article', document.getElementById('target').value,'$userName')\" value=\"Unleash hell!\">";
 	}
 	else
 	{
