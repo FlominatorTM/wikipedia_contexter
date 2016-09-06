@@ -24,13 +24,26 @@ function checkBoxes(server, replace, replaceWith, user)
 }
 
 /* copied from https://de.wikipedia.org/wiki/Benutzer:DerHexer/fixlinks.js */
-function generate_flatime_flo () {
+function generate_flatime_flo () 
+{
    var arbitrary_datestamp = Date.UTC(2008,10,1,0,0,0,0);
    var current_date = new Date();
    var current_timestamp = current_date.getTime();
  
    return ( Math.floor((current_timestamp - arbitrary_datestamp) / 1000) );
- }</script>
+}
+
+function unCheckAll()
+{
+   	allInputs = document.getElementsByTagName('input');
+	for(var i =0; i<allInputs.length; i++)
+	{
+		if(allInputs[i].type=="checkbox")
+		{
+			allInputs[i].checked = false;
+		}
+	}
+}</script>
 <?
 //shows the context articles linked to one given article mention it by printing one sentence where it is used
 include("shared_inc/wiki_functions.inc.php");
@@ -97,7 +110,9 @@ if ($is_debug) var_dump($pages);if ($is_debug) var_dump($pages);
 			echo "</label>";
 		}
 	echo "<input id=\"target\" value=\"(Linkziel neu)\">\n";
-	echo "<input type=\"button\" onclick=\"javascript:checkBoxes('$server', '$article', document.getElementById('target').value,'$userName')\" value=\"Unleash hell!\">";
+	echo "<input type=\"button\" onclick=\"javascript:checkBoxes('$server', '$article', document.getElementById('target').value,'$userName')\" value=\"Unleash hell!\">\n";
+	echo "<input type=\"button\" onclick=\"javascript:unCheckAll()\" value=\"Uncheck\">\n";
+	
 	}
 	else
 	{
