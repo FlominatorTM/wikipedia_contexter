@@ -85,11 +85,11 @@ $pages = get_linked_pages($articleenc);
 	if($listonly!="true")
 	{
 		$summary = str_replace('_ARTICLE_', $needle, $summary);
-if ($is_debug) var_dump($pages);if ($is_debug) var_dump($pages);
+		if ($is_debug) var_dump($pages);
 		foreach ($pages AS $linking_article)
 		{
 		if($is_debug)  echo "<hr>$linking_article<hr>";
-			$ex_sentences = extract_sentences(name_in_url($linking_article));
+			$ex_sentences = extract_sentences($linking_article);
 			
 			$sentences_cont = find_sentence_with($ex_sentences, $needle);
 			
@@ -127,8 +127,8 @@ if ($is_debug) var_dump($pages);if ($is_debug) var_dump($pages);
 
 function get_linked_pages($articleenc)
 {
-	if($is_debug)  echo "entering get_linked_pages";
 	global $server, $limit, $allNamespaces, $is_debug;
+	if($is_debug)  echo "entering get_linked_pages";
 	//$page = "http://".$server."/wiki/Spezial:Verweisliste/".;
 	
 	if($is_debug)
@@ -164,7 +164,7 @@ function get_linked_pages($articleenc)
 	for($i=0;$i<count($link_rows);$i++)
 	{
 		$end_of_link = strpos($link_rows[$i], "  ‎ (");
-		$link_rows[$i] = substr($link_rows[$i], 0, $end_of_link);
+		$link_rows[$i] =  html_entity_decode(substr($link_rows[$i], 0, $end_of_link), ENT_QUOTES);
 		if($is_debug) echo "<br>$link_rows[$i]";
 	}
 	
@@ -175,9 +175,11 @@ function get_linked_pages($articleenc)
 
 function extract_sentences ($article)
 {
-	global $server;
-	$page = "https://".$server."/w/index.php?action=raw&title=".$article;
+	global $server, $is_debug;
 	
+	$page = "https://".$server."/w/index.php?action=raw&title=".urlencode($article);
+	
+	if($is_debug) echo "page=$page";
 	$art_text = file_get_contents($page);
 
 	// echo "<h1>art_text</h1> $art_text <hr>";
@@ -190,6 +192,7 @@ function extract_sentences ($article)
 	
 	foreach($paragraphs as $p)
 	{
+		if($is_debug) echo "<i>$p</i><br><br>";
 		$sentences_p = explode('.', $p);
 		foreach($sentences_p as $sp)
 		{
