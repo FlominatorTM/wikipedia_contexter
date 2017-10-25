@@ -52,6 +52,11 @@ $is_debug = ($_REQUEST['debug']=="on" || $_REQUEST['debug']=="true" );
 $article = $_REQUEST['article'];
 $articleenc = name_in_url($article);
 $lang = "de";
+
+if($_REQUEST['lang']!="")
+{
+    $lang=$_REQUEST['lang'];
+}
 $project = "wikipedia";
 
 $needle = $_REQUEST['needle'];
